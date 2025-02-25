@@ -1,0 +1,73 @@
+services:
+  test_app_1:
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_NAME=App1
+    restart: always
+    container_name: test_app_1
+    build: app/
+    image: test_app:latest
+    expose:
+       - 7001
+    ports:
+      - 8987:7001
+
+  test_app_2:
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_NAME=App2
+    restart: always
+    container_name: test_app_2
+    build: app/
+    image: test_app:latest
+    expose:
+       - 7001
+    ports:
+      - 8988:7001
+  
+
+  test_app_3:
+    environment:
+      - PYTHONUNBUFFERED=1
+      - APP_NAME=App3
+    restart: always
+    container_name: test_app_3
+    build: app/
+    image: test_app:latest
+    expose:
+       - 7001
+    ports:
+      - 8989:7001
+
+  server_app:
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: always
+    container_name: server_app
+    build: server_app/
+    image: server_app:latest
+    expose:
+       - 7002
+    ports:
+      - 8990:7002
+
+  nginx:
+    build: custom_nginx/
+    volumes:
+      - ./nginx.conf:/opt/bitnami/openresty/nginx/conf/nginx.conf
+    container_name: nginx_test
+    depends_on:
+      - test_app_1
+      - test_app_2
+      - test_app_3
+      - server_app
+    ports:
+      - "7000:7000"
+
+
+networks:
+  default:
+    name: test_network
+    # driver: bridge
+    external: true
+      
